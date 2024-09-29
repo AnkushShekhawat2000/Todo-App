@@ -1,5 +1,6 @@
 Todo App
 
+Project setup
 Setup express server : Done
 mongodb connection : Done
 
@@ -16,6 +17,7 @@ Middleware to protect API's : Done
 
 Dashboard Page: Done
 logout API : Done
+logout from all device API
 
 
 Todo APi's
@@ -30,6 +32,9 @@ axios read: Done
 axios delete: Done
 axios edit: Done
 
-Rate limiting 
-Pagination API's : Done
-Deploy
+Rate limiting -> one user cannot make many request (optimize server)
+Pagination API's : Done :-> send limited data from client (optimize server)
+Deploy  (render,vercel)
+
+
+Email Base Auth (JWT)

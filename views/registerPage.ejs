@@ -6,27 +6,88 @@
 <style>   
 Body {  
   font-family: Calibri, Helvetica, sans-serif;  
-  background-color: pink;  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #E4E8FA;
 }  
+
+.main{
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    background-color:#FAFBFD;
+    width: 500px;
+    height: 700px;
+    border-radius: 30px;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+
+}
+
+fieldset{
+  border-radius: 10px;
+  color:#E7E7E9;
+  height: 60px;
+  margin-top: 30px;
+}
+
+legend{
+    color: black;
+}
+
+
+legend span{
+ color: red;
+
+}
+
+input,
+input::placeholder {
+    font: 1.25rem/2 sans-serif;
+    padding-left: 5px;
+}
 button {   
        background-color: #4CAF50;   
-       width: 100%;  
-        color: orange;   
-        padding: 15px;   
-        margin: 10px 0px;   
+       width: 50%;  
+        color: rgb(66, 65, 65);   
+        padding: 25px;   
+        margin-left: 100px;  
         border: none;   
-        cursor: pointer;   
+        cursor: pointer; 
+        border-radius: 10px;  
          }   
  form {   
-        border: 3px solid #f1f1f1;   
+        border-top: 1.5px solid #f1f1f1;
+        display: flex;
+        flex-direction: column;
+         margin-top:5px;  
+         display: flex;
+        justify-content: space-between;
+        width: 90%;
+        height: 100%;
+       
+     
     }   
+
+    input{
+        height: 40px;
+        background-color: #FAFBFD;
+       
+    }
  input[type=text], input[type=password] {   
-        width: 100%;   
-        margin: 8px 0;  
+ 
+    
         padding: 12px 20px;   
         display: inline-block;   
-        border: 2px solid green;   
-        box-sizing: border-box;   
+        border: none; 
+        box-sizing: border-box; 
+        border-radius: 10px; 
+        font-size: 18px;
+        outline: none;
+        
+
     }  
  button:hover {   
         opacity: 0.7;   
@@ -39,26 +100,63 @@ button {
         
      
  .container {   
-        padding: 25px;   
-        background-color: lightblue;  
+        padding: 25px;
+        display: flex;
+        justify-content: center;
+       gap: 10px;
+        flex-direction: column;
+
+      
     }   
 </style>   
 </head>    
 <body>    
-    <center> <h1> Register Form </h1> </center>   
-    <form action='/register-user' method="POST">  
-        <div class="container">   
-            <label for="name">Name : </label>   
-            <input type="text" placeholder="Enter Name" name="name" required>  
-            <label for="email">Email : </label>  
-            <input type="text" placeholder="Enter Email" name="email" required>  
-            <label for="username">Username : </label>    
-            <input type="text" placeholder="Enter Username" name="username" required>  
-            <label for="password">Password : </label>   
-            <input type="password" placeholder="Enter Password" name="password" required>  
-            <button type="submit">Register</button>   
-        </div>   
-    </form>     
+     <div class="main">
+
+        <center> <h1> Registration Form </h1> </center>   
+        <form action='/register-user' method="POST">  
+            <div class="container">  
+                <fieldset>
+                    <legend>
+                        <label>Name<span>*</span></label>
+                    </legend> 
+                   
+                  <input type="text" placeholder="Enter Name" name="name" required>  
+                </fieldset>
+                <fieldset>
+                    <legend>
+                        <label>Email<span>*</span></label>
+                    </legend> 
+                   
+                <input type="text" placeholder="Enter Email" name="email" required>  
+                </fieldset>
+    
+               <fieldset>
+                    <legend>
+                        <label>Username<span>*</span></label>
+                    </legend> 
+                   
+                    <input type="text" placeholder="Enter Username" name="username" required>  
+     
+                </fieldset>
+    
+    
+                <fieldset>
+                    <legend>
+                        <label>Password<span>*</span></label>
+                    </legend> 
+                   
+                    <input type="password" placeholder="Enter Password" name="password" required>  
+     
+                </fieldset>
+    
+    
+                <button type="submit">Register</button> 
+              
+            </div>   
+        </form> 
+
+     </div>    
 
 </body>     
 </html> 

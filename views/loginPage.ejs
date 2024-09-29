@@ -3,58 +3,145 @@
 <head>  
 <meta name="viewport" content="width=device-width, initial-scale=1">  
 <title> Login Page </title>  
-<style>   
-Body {  
-  font-family: Calibri, Helvetica, sans-serif;  
-  background-color: pink;  
-}  
-button {   
-       background-color: #4CAF50;   
-       width: 100%;  
-        color: orange;   
-        padding: 15px;   
-        margin: 10px 0px;   
-        border: none;   
-        cursor: pointer;   
-         }   
- form {   
-        border: 3px solid #f1f1f1;   
-    }   
- input[type=text], input[type=password] {   
-        width: 100%;   
-        margin: 8px 0;  
-        padding: 12px 20px;   
-        display: inline-block;   
-        border: 2px solid green;   
-        box-sizing: border-box;   
-    }  
- button:hover {   
-        opacity: 0.7;   
-    }   
-  .cancelbtn {   
-        width: auto;   
-        padding: 10px 18px;  
-        margin: 10px 5px;  
-    }   
-        
-     
- .container {   
-        padding: 25px;   
-        background-color: lightblue;  
-    }   
-</style>   
+  
 </head>    
-<body>    
-    <center> <h1> Login Form </h1> </center>   
-    <form action='/login-user' method="POST">  
-        <div class="container">   
-            <label for="loginId">Email or Username : </label>   
-            <input type="text" placeholder="Enter Email or Username" name="loginId" required>  
-            <label for="password">Password : </label>   
-            <input type="password" placeholder="Enter Password" name="password" required>  
-            <button type="submit">Login</button>   
-        </div>   
-    </form>     
-</body>     
+   
+  
+
+<style>  
+
+    Body {  
+      font-family: Calibri, Helvetica, sans-serif;  
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #E4E8FA;
+    }  
+    
+    .main{
+        margin-top: 100px;
+        display: flex;
+        flex-direction: column;
+        background-color:#FAFBFD;
+        width: 500px;
+        height: 500px;
+        border-radius: 30px;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+    
+    }
+    
+    fieldset{
+      border-radius: 10px;
+      color:#E7E7E9;
+      height: 60px;
+      margin-top: 30px;
+    }
+    
+    legend{
+        color: black;
+    }
+    
+    
+    legend span{
+     color: red;
+    
+    }
+    
+    input,
+    input::placeholder {
+        font: 1.25rem/2 sans-serif;
+        padding-left: 5px;
+    }
+    button {   
+           background-color: #4CAF50;   
+           width: 50%;  
+            color: rgb(66, 65, 65);   
+            padding: 25px;   
+            margin-left: 100px;  
+            border: none;   
+            cursor: pointer; 
+            border-radius: 10px;  
+             }   
+     form {   
+            border-top: 1.5px solid #f1f1f1;
+            display: flex;
+            flex-direction: column;
+             margin-top:5px;  
+             display: flex;
+            justify-content: space-between;
+            width: 90%;
+            height: 100%;
+           
+         
+        }   
+    
+        input{
+            height: 40px;
+            background-color: #FAFBFD;
+           
+        }
+     input[type=text], input[type=password] {   
+     
+        
+            padding: 12px 20px;   
+            display: inline-block;   
+            border: none; 
+            box-sizing: border-box; 
+            border-radius: 10px; 
+            font-size: 18px;
+            outline: none;
+            
+    
+        }  
+     button:hover {   
+            opacity: 0.7;   
+        }   
+      .cancelbtn {   
+            width: auto;   
+            padding: 10px 18px;  
+            margin: 10px 5px;  
+        }   
+            
+         
+     .container {   
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 15px;
+    
+          
+        }   
+    </style>   
+    </head>    
+    <body>    
+         <div class="main">
+            <center> <h1> Login Form </h1> </center>   
+            <form action='/login-user' method="POST">  
+                <div class="container">  
+                    <fieldset>
+                        <legend>
+                            <label>Email or Username   <span>*</span></label>
+                        </legend> 
+                       
+                        <input type="text" placeholder="Enter Email or Username" name="loginId" required> 
+                    </fieldset>
+                    <fieldset>
+                        <legend>
+                            <label>Password<span>*</span></label>
+                        </legend> 
+                       
+                        <input type="password" placeholder="Enter Password" name="password" required>  
+                    </fieldset>
+                      
+                    <button type="submit">Login</button> 
+                </div>   
+            </form> 
+    
+         </div>    
+    
+    </body> 
 </html> 
 
