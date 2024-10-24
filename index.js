@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 require("dotenv").config();  // import dotenc pakg
 const bcrypt = require('bcryptjs');
 const session = require('express-session');
@@ -8,7 +9,7 @@ const todoModel = require("./models/todoModel");
 
 
 // file-import
-const {userDataValidation, isEmailValidator} = require('./utils/authUtil');
+const {userDataValidation, isEmailValidator, generateToken, sendEmailVerificationMail } = require('./utils/authUtil');
 const userModel = require("./models/userModel");
 const isLoggedIn = require('./middlewares/isAuthMiddleware');
 const todoDataValidation = require('./utils/todoUtils');
@@ -19,7 +20,7 @@ const todoDataValidation = require('./utils/todoUtils');
 
 // contants
 const app = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.PORT || 8001;
 const store = new mongodbSession(({
     uri: process.env.MONGO_URI,
     collection: "sessions",
@@ -36,10 +37,10 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 // middlewares
-                                  // view ko ejs file provide krata h
-app.set("view engine", "ejs");   // setting a view engine to expres ejs   // getter setter hite h -> get(),set()
-app.use(express.urlencoded({ extended: true }));   // encoded data form
-app.use(express.json()); //encoded the json data
+                                  
+app.set("view engine", "ejs");  
+app.use(express.urlencoded({ extended: true }));  
+app.use(express.json()); 
 app.use(session({
    secret: process.env.SECRET_KEY,
    store: store,
@@ -47,13 +48,13 @@ app.use(session({
    saveUninitialized: false,
 }))
 
-app.use(express.static("public"));   // public folder o static bna rahe (mtlab hm usko browser side par execute kr rahe h)
+app.use(express.static("public"));  
 
 
 
 // api
 app.get("/", (req,res)=>{
-    return res.send("Server is running");
+    return res.render("homepage");
 })
 
 app.get('/test', (req, res)=>{
@@ -74,23 +75,10 @@ app.post('/register-user', async(req, res)=>{
      await  userDataValidation({name, email, username, password});
     }catch(error){
        return res.status(400).json(error);
-    //    return res.send(
-    //     {status: 400,
-    //         message: "Data invalid",
-    //         error: error,
-    //     }
-    //    )    
+    
     }
 
-    // store the data in the Db
-    // 1st way
-    // const userDb = await userModel.create({
-    //     name: name,
-    //     email: email,
-    //     username: username,
-    //     password: password,
-    // })
-
+ 
     
     // check user already registered with this email or not
 
@@ -105,20 +93,14 @@ app.post('/register-user', async(req, res)=>{
          }
 
          const userNameExist = await userModel.findOne({username}); 
-         console.log("user find with this userName already", userNameExist);
+         console.log("user with this userName already", userNameExist);
          if(userNameExist) {
             return res.status(400).json("Username already exists");
          }
      
 
-
-
-    // hashing the password (password ko encrypt krke save krnege db me warna koi bhi hmara password dekh sakhta h)
-    // hash() do paerimetr leta h 
-    // 1st -> password jo hme user side se deya
-    // 2nd -> count likhenge jitne bar hash krn h -> agr jitne bar hash ho password utne hi harder password endcrypt password bnega
     const hashedPassword = await bcrypt.hash(password, Number(process.env.SALT));
-    console.log("hassedpassword", hashedPassword);   //hassedpassword $2a$10$rt7aR1UChK36xFcLVuynTOBX1pq/Dh583LXBr16bRmEajT0JGIOHW
+    console.log("hassedpassword", hashedPassword);   
 
     // 2nd way
      const userObj = new userModel(
@@ -129,23 +111,25 @@ app.post('/register-user', async(req, res)=>{
             password: hashedPassword,
         }
      )
-                                                      //console.log("before save", userObj);
-      const userDb = await userObj.save();
-                                                   // console.log("after save in db", userDb);
-       return res.redirect("/login");
-       
-         // return res.send({
-        //     status: 201,
-        //     message: "Register successfully",
-        //     data: userDb,
-        // })
 
-        // return res.status(201).json({
-        // message : "Register Successfully",
-        //  data: userDb
-        // })
+
+     // generate the token 
+     const token = generateToken(email);
+                                           console.log("token", token);
+
+     // and send to the user gmail
+     sendEmailVerificationMail({token, email});
+   
+
+
+
+
+                                                      console.log("before save", userObj);
+      const userDb = await userObj.save();
+                                                      console.log("after save in db", userDb);
+       return res.redirect("/login");
+    
      }
-     
      catch(error){
        return res.send({
         status : 500,
@@ -156,6 +140,27 @@ app.post('/register-user', async(req, res)=>{
 
 
 } )
+
+
+// email verify api
+app.get("/verify/:token", async (req, res)=> {
+   
+
+    const token = req.params.token;
+
+    const email = jwt.verify(token, process.env.SECRET_KEY);
+    console.log("verified email", email);
+
+
+    try{
+       await  userModel.findOneAndUpdate( {email: email}, {isEmailVerified: true});
+          
+        return res.redirect('/login');
+    }
+    catch(error){
+        return res.status(500).json(error);
+    }
+})
 
 
 // login
@@ -179,11 +184,11 @@ app.post('/login-user', async (req, res)=>{
 
         if(isEmailValidator({key:loginId})){
             userDb = await userModel.findOne({email: loginId});
-                                   //console.log("found by email", userDb);
+                                  
          }
        else{
             userDb = await userModel.findOne({username: loginId});
-                                    //console.log("found by username", userDb);
+                                   
         }
                                 
        console.log("line 169", userDb);
@@ -192,24 +197,25 @@ app.post('/login-user', async (req, res)=>{
             return res.status(400).json("User not found, please register first");
         }
 
+
         console.log("Client side password: ",password  , "dppassword: ", userDb.password);    //Client side password:  123456 dppassword:  $2a$10$lRwSvu0Pgv7zVUqtBhL5s.3puoeaQA2xxGZoXH.lMx29u5QfqPHdq
 
+        // check if email is verified or not
+        if(!userDb.isEmailVerified){
+            return res.status(400).json("Please verify your email before login");
+        }
 
 
-        // compare password : -> before login user we need to check the password from the db pass if it is correct or not
-        // the db password is encrypt so firstly we need to decrypt then compare 
-        // if client and db password is same simple we can login other refuse the login request
 
-        // bcrypt.compare() takes 2 args db pass and client pass and decrypt the encypt pass and compare  if same return true diff return false
        const isMatched = await bcrypt.compare(password, userDb.password)  // true or false
         console.log(isMatched);  // -> true or  false
 
         if(!isMatched)  return res.status(400).json("Incorrect password");
 
 
-        // data base se lakar req se attached krta h nahi milta h to khud se create kr deta h
-        console.log(req.session) // undefined (because we not)
-        req.session.isLoggedIn = true;  // this session will be saved in db
+     
+        console.log(req.session) 
+        req.session.isLoggedIn = true;  
         req.session.user = {
             userId : userDb._id,
             username : userDb.username,
@@ -217,7 +223,7 @@ app.post('/login-user', async (req, res)=>{
         };
 
         return res.redirect("/dashboard");
-       // return res.status(200).json("Login successful");
+    
     }
     catch(error){
         return res.status(500).json(error);
@@ -252,8 +258,7 @@ app.post('/logout', isLoggedIn, (req, res)=> {
 // logout from all devices
 app.post("/logout-out-from-all", async (req, res)=> {
     
-    // console.log(req.session.user.username);
-    // //delete may({username :????})
+   
 
     const username = req.session.user.username;
 
@@ -337,9 +342,6 @@ app.get('/read-item', isLoggedIn, async (req,res) => {
     const LIMIT = 5;
 
     try{
-    // normal query (whole data will come from db and send to the client side)
-    // const todoDb = await todoModel.find({username: userName});
-
 
 
     // pagination query (only limit data will will we getting in the db and send to the client side)

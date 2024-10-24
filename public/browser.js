@@ -49,20 +49,18 @@ function generateTodos() {
 
 // edit data 
 document.addEventListener("click", function(event) {
-//   console.log("clicked");
+
 
         if(event.target.classList.contains("edit-me")){
-                                                    // console.log("edit-me clicked")
-                                                    //console.log(event.target);
-                                                    //console.log(event.target.getAttribute("data-id"));
+                                                    
 
             const todoId = event.target.getAttribute("data-id");
             const newData = prompt("Enter new text");
 
-            // call api passing todId and newData
+      
             axios.post("/edit-item", {todoId, newData})
                 .then(res => {
-                    // console.log(res)
+        
 
                     if(res.data.status !== 200){
                         alert(res.data.message);
@@ -111,7 +109,7 @@ document.addEventListener("click", function(event) {
             // console.log("add buton clicked");
 
            const input =  document.getElementById("create_field");
-                                                                    // console.log(input, input.value);
+                                                                 
             const inputText = input.value;
             if(inputText.trim() === ""){
                 alert("Please enter a todo");
@@ -150,7 +148,7 @@ document.addEventListener("click", function(event) {
        }    
        
        else if(event.target.classList.contains("logout_me")){
-                                           // console.log("logout clicked");
+                                       
          
          axios.post('/logout')
             .then((res)=>{
